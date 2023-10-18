@@ -2,5 +2,6 @@ evadb_data
 
 .DS_Store
 
-
+__pycache__/
+venv/
 .idea
