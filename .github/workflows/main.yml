@@ -31,10 +31,7 @@ jobs:
           push: true
           tags: evadbrestdocker.azurecr.io/${{ secrets.REGISTRY_USERNAME }}/evadb-rest-image:${{ github.sha }}
           file: ./Dockerfile
-      
-      - run: |
-          docker build . -t evadbrestdocker.azurecr.io/evadb-rest-image:${{ github.sha }}
-          docker push evadbrestdocker.azurecr.io/evadb-rest-image:${{ github.sha }}  
+       
 
 
   deploy:
