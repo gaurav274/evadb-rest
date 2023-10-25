@@ -33,7 +33,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: evadbrestdocker.azurecr.io/${{ secrets.REGISTRY_USERNAME }}/evadb-rest-image:${{ github.sha }}
+          tags: evadbrestdocker.azurecr.io/evadb-rest-image:${{ github.sha }}
           file: ./Dockerfile
        
 
@@ -53,4 +53,4 @@ jobs:
           app-name: 'evadb-rest-docker-app'
           slot-name: 'production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_5F7A87306CA94655BB8A4671B1ACC7C4 }}
-          images: 'evadbrestdocker.azurecr.io/${{ secrets.REGISTRY_USERNAME }}/evadb-rest-image:${{ github.sha }}'
+          images: 'evadbrestdocker.azurecr.io/evadb-rest-image:${{ github.sha }}'
