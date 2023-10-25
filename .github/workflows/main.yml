@@ -34,4 +34,4 @@ jobs:
           app-name: 'evadb-rest-docker-app'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_5F7A87306CA94655BB8A4671B1ACC7C4 }}
-          images: 'mycontainer.azurecr.io/evadb-rest-image:${{ github.sha }}'
+          images: 'evadbrestdocker.azurecr.io/evadb-rest-image:${{ github.sha }}'
