@@ -11,27 +11,45 @@ on:
 
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
+      
+      - name: Log in to container registry
       - uses: azure/docker-login@v1
         with:
-                login-server: evadbrestdocker.azurecr.io
-                username: ${{ secrets.REGISTRY_USERNAME }}
-                password: ${{ secrets.REGISTRY_PASSWORD }}
+           registry: https://evadbrestdocker.azurecr.io/
+           username:  ${{ secrets.REGISTRY_USERNAME }}
+           password: ${{ secrets.REGISTRY_PASSWORD }}
+      
+      - name: Build and push container image to registry
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: true
+          tags: evadbrestdocker.azurecr.io/${{ secrets.REGISTRY_USERNAME }}/evadb-rest-image:${{ github.sha }}
+          file: ./Dockerfile
+      
       - run: |
           docker build . -t evadbrestdocker.azurecr.io/evadb-rest-image:${{ github.sha }}
           docker push evadbrestdocker.azurecr.io/evadb-rest-image:${{ github.sha }}  
 
 
-     
-      - name: 'Deploy to Azure Web App'
-        uses: azure/webapps-deploy@v2
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: 'production'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+
+    steps:
+      - name: Deploy to Azure Web App
         id: deploy-to-webapp
+        uses: azure/webapps-deploy@v2
         with:
           app-name: 'evadb-rest-docker-app'
-          slot-name: 'Production'
+          slot-name: 'production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_5F7A87306CA94655BB8A4671B1ACC7C4 }}
-          images: 'evadbrestdocker.azurecr.io/evadb-rest-image:${{ github.sha }}'
+          images: 'evadbrestdocker.azurecr.io/${{ secrets.REGISTRY_USERNAME }}/evadb-rest-image:${{ github.sha }}'
