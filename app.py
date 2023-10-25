@@ -37,5 +37,4 @@ def create():
 
 
 if __name__ == "__main__":
-    print("Running Flask Server")
     app.run()         
