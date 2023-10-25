@@ -1,4 +1,7 @@
-name: EvaDB-REST
+# https://learn.microsoft.com/en-us/azure/app-service/tutorial-custom-container?tabs=azure-cli&pivots=container-linux
+# https://learn.microsoft.com/en-us/azure/app-service/deploy-container-github-action?tabs=publish-profile
+#
+name: EvaDB-REST-CONTAINER
 
 on:
   push:
@@ -13,25 +16,22 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-
-      - name: Set up Python version
-        uses: actions/setup-python@v1
+      - uses: azure/docker-login@v1
         with:
-          python-version: '3.10'
+                login-server: evadbrestdocker.azurecr.io
+                username: ${{ secrets.REGISTRY_USERNAME }}
+                password: ${{ secrets.REGISTRY_PASSWORD }}
+      - run: |
+          docker build . -t evadbrestdocker.azurecr.io/evadb-rest-image:${{ github.sha }}
+          docker push evadbrestdocker.azurecr.io/evadb-rest-image:${{ github.sha }}  
 
-      - name: Create and start virtual environment
-        run: |
-          python -m venv venv
-          source venv/bin/activate
 
-      - name: Install dependencies
-        run: pip install -r requirements.txt
      
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v2
         id: deploy-to-webapp
         with:
-          app-name: 'OSS-EvaDB-REST'
+          app-name: 'evadb-rest-docker-app'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_5F7A87306CA94655BB8A4671B1ACC7C4 }}
-          package: "."
+          images: 'mycontainer.azurecr.io/evadb-rest-image:${{ github.sha }}'
