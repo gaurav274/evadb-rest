@@ -2,16 +2,16 @@ from flask import Flask, request, render_template
 from flask_cors import CORS
 import evadb
 import lark
-import json
 
+from startup_steps import StartupSteps
 from response import Response
 from response import Type
 
 app = Flask(__name__)
-
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
-    
+
 cursor = evadb.connect().cursor()
+StartupSteps(cursor).run()
 
 @app.route('/')
 def index():
@@ -58,4 +58,4 @@ def get_tables():
     return Response(data = tables, type = Type.TABLE.name).generate()
 
 if __name__ == "__main__":
-    app.run()         
+    app.run()

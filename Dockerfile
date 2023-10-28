@@ -7,6 +7,8 @@ WORKDIR /app
 
 # Copy the current directory contents into the container at /app
 COPY ./app.py /app
+COPY ./response.py /app
+COPY ./startup_steps.py /app
 COPY ./requirements.txt /app
 COPY ./templates /app/templates
 
@@ -15,6 +17,7 @@ RUN pip install -r requirements.txt
 
 # Make port 80 available to the world outside this container
 EXPOSE 5000
+ENV FLASK_ENV=production
 
 # Run app.py when the container launches
 CMD ["gunicorn", "-b 0.0.0.0:5000", "app:app"]
