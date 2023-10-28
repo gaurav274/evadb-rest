@@ -1,10 +1,10 @@
-from flask import Flask, request, render_template, Response
+from flask import Flask, request, render_template
 from flask_cors import CORS
 import evadb
 import lark
 import json
 
-from response import Response as Resp
+from response import Response
 from response import Type
 
 app = Flask(__name__)
@@ -22,29 +22,13 @@ def execute():
     try:
         data = request.json['query']
         res = cursor.query(data).df()
-        return Response(
-            response=Resp(data = res.to_json(orient='records'), type = Type.TABLE.name).json(),
-            status=200,
-            mimetype="text/json"
-        )
+        return Response(data=res.to_json(orient='records'), type=Type.TABLE.name).generate()
     except AssertionError:
-        return Response(
-            response=Resp(msg = "Please check your syntax", type = Type.ERROR.name).json(),
-            status=500,
-            mimetype="text/json"
-        )
+        return Response(msg = "Please check your syntax", type = Type.ERROR.name).generate(status=500)
     except lark.exceptions.UnexpectedToken:
-        return Response(
-            response=Resp(msg="Unexpected token in your query or incomplete syntax", type=Type.ERROR.name).json(),
-            status=500,
-            mimetype="text/json"
-        )
+        return Response(msg="Unexpected token in your query or incomplete syntax", type=Type.ERROR.name).generate(status=500)
     except Exception as e:
-        return Response(
-            response=Resp(msg="Unexpected error occurred", type=Type.ERROR.name).json(),
-            status=500,
-            mimetype="text/json"
-        )
+        return Response(msg="Unexpected error occurred", type=Type.ERROR.name).generate(500)
 
 @app.route('/create', methods = ['POST'])
 def create():
@@ -62,11 +46,7 @@ def create():
     """.format(name=data['name'], engine=data['engine'], user=data['user'], password=data['password'], host=data['host'], port=data['port'], db=data['db'])
     res = cursor.query(query).df()
 
-    return  Response(
-        response=Resp(data = res.to_json(orient ='records'), type = Type.TABLE.name).json(),
-        status=200,
-        mimetype="text/json"
-    )
+    return Response(data = res.to_json(orient ='records'), type = Type.TABLE.name).generate()
 
 
 @app.route('/tables', methods = ['GET'])
@@ -75,11 +55,7 @@ def get_tables():
     lst = res.values.tolist()
     tables = [table for [table] in lst]
 
-    return  Response(
-        response=Resp(data = tables, type = Type.TABLE.name).json(),
-        status=200,
-        mimetype="text/json"
-    )
+    return Response(data = tables, type = Type.TABLE.name).generate()
 
 if __name__ == "__main__":
     app.run()         
