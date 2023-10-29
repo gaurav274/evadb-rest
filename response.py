@@ -24,5 +24,6 @@ class Response:
 
 
 class Type(Enum):
+    ERROR = 0
     TABLE = 1
-    ERROR = 2
+    SCHEMA = 3
