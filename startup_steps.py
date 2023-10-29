@@ -21,7 +21,23 @@ class StartupSteps():
                             "password": 'password'}
                     """
                 ).df()
+            else:
+
+                # development
+                self.cursor.query(
+                    """
+                        CREATE DATABASE pg_db
+                        WITH ENGINE = 'postgres',
+                        PARAMETERS = {
+                            "host": 'localhost',
+                            "port": '5432',
+                            "database": 'postgres',
+                            "user": 'postgres',
+                            "password": 'password'}
+                    """
+                ).df()
         except Exception as e:
+            print(e)
             pass
 
 

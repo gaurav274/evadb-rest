@@ -54,6 +54,19 @@ def get_tables():
     res = cursor.query("SHOW tables").df()
     lst = res.values.tolist()
     tables = [table for [table] in lst]
+    res = cursor.query(
+        """
+            USE pg_db {
+                SELECT table_name
+                FROM information_schema.tables
+                WHERE table_schema='public'
+                AND table_type='BASE TABLE'
+            } 
+        """
+    ).df()
+
+    for [table] in res.values.tolist():
+        tables.append(table)
 
     return Response(data = tables, type = Type.TABLE.name).generate()
 
