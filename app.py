@@ -32,23 +32,23 @@ def execute():
     except Exception as e:
         return Response(msg="Unexpected error occurred", type=Type.ERROR.name).generate(500)
 
-@app.route('/create', methods = ['POST'])
-def create():
-    data = request.json['params']
-    query = """
-        CREATE DATABASE {name}
-        WITH ENGINE = '{engine}',
-        PARAMETERS = {{
-            "user": '{user}',
-            "password": '{password}',
-            "host": '{host}',
-            "port": '{port}',
-            "database": '{db}'
-        }};
-    """.format(name=data['name'], engine=data['engine'], user=data['user'], password=data['password'], host=data['host'], port=data['port'], db=data['db'])
-    res = cursor.query(query).df()
-
-    return Response(data = res.to_json(orient ='records'), type = Type.TABLE.name).generate()
+# @app.route('/create', methods = ['POST'])
+# def create():
+#     data = request.json['params']
+#     query = """
+#         CREATE DATABASE {name}
+#         WITH ENGINE = '{engine}',
+#         PARAMETERS = {{
+#             "user": '{user}',
+#             "password": '{password}',
+#             "host": '{host}',
+#             "port": '{port}',
+#             "database": '{db}'
+#         }};
+#     """.format(name=data['name'], engine=data['engine'], user=data['user'], password=data['password'], host=data['host'], port=data['port'], db=data['db'])
+#     res = cursor.query(query).df()
+#
+#     return Response(data = res.to_json(orient ='records'), type = Type.TABLE.name).generate()
 
 
 @app.route('/schemas', methods = ['GET'])
