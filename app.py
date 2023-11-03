@@ -82,8 +82,8 @@ def get_tables():
         evadb_connector = app.config["evadb_connector"]
 
         """EvaDB """
-        res = evadb_connector.cursor.query("SHOW tables").df()
-        tables[DBEngine.EVADB.name] = [[json.loads(PostgresSchema(table_name, Columns(None, None)).json())] for [table_name] in res.values.tolist()]
+        res = ["id", "house", "quote"]
+        tables[DBEngine.EVADB.name] = [[json.loads(PostgresSchema("GOT", Columns(column_name, "TEXT")).json()) for column_name in res]]
 
         """Postgres """
         res = evadb_connector.cursor.query(
@@ -126,6 +126,7 @@ def get_tables():
             tables[DBEngine.POSTGRES.name].append(table_metadata)
         return Response(data = [tables], type = Type.SCHEMA.name).generate()
     except Exception as e:
+        print(e)
         return Response(msg="Unexpected error occurred", type=Type.ERROR.name).generate(500)
 
 

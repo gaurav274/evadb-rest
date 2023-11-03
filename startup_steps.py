@@ -8,6 +8,7 @@ class StartupSteps():
 
     def initialize_db(self):
         try:
+            self.execute_common_queries()
             if os.environ["FLASK_ENV"] == "production":
                 self.cursor.query(
                     """
@@ -38,6 +39,29 @@ class StartupSteps():
                 ).df()
         except Exception as e:
             print(e)
-            pass
+
+    def execute_common_queries(self):
+        self.cursor.query(
+            """
+                CREATE TABLE GOT (
+                    id INTEGER UNIQUE,
+                    house TEXT(50),
+                    quote TEXT(50)
+                );
+            """
+        ).df()
+
+        self.cursor.query(
+            """
+                INSERT INTO GOT (id, house, quote) VALUES
+                (1, 'Baratheon', 'Ours is the Fury'),
+                (2, 'Greyjoy', 'We Do Not Sow'),
+                (3, 'Martell', 'Unbowed, Unbent, Unbroken'),
+                (4, 'Stark', 'Winter Is Coming'),
+                (5, 'Tully', 'Family, Duty, Honor'),
+                (6, 'Tyrell', 'Growing Strong'),
+                (7, 'Lannister', 'Hear Me Roar!')
+            """
+        ).df()
 
 
